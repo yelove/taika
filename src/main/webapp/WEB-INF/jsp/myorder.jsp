@@ -101,9 +101,9 @@
 <script type="text/javascript">
 	var showflag = false;
 	$(document).ready(function(){
-		if('false'==<%=request.getAttribute('flag')%>){
+		<%-- if('false'==<%=request.getAttribute('flag')%>){
 			dm_notification('系统异常,请联系管理员。', 'green', 2000)
-		}
+		} --%>
 	});
 	function showHideAddform() {
 		if (showflag) {

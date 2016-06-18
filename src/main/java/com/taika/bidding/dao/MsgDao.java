@@ -76,12 +76,12 @@ public class MsgDao {
 
 	@SuppressWarnings("deprecation")
 	public int count(String qstr) {
-		String sql = "select count(1) from `msg` where state=2 and  msg like ?";
+		String sql = "select count(1) from `msg` where status=2 and  msg like ?";
 		return template.queryForInt(sql, "%" + qstr + "%");
 	}
 
 	public List<Msg> getOldMsg(int currentPage, int pagesize, String qstr) {
-		String sql = "select * from `msg` where state=2 and msg like ? limit ?,?";
+		String sql = "select * from `msg` where status=2 and msg like ? limit ?,?";
 		List<Map<String, Object>> rsm = template.queryForList(sql,
 				new Object[] { "%" + qstr + "%", pagesize * (currentPage - 1), pagesize });
 		List<Msg> rsod = new ArrayList<Msg>();
@@ -103,7 +103,7 @@ public class MsgDao {
 	}
 
 	public List<Msg> getNewMsg() {
-		String sql = "select * from `msg` where state=0 ";
+		String sql = "select * from `msg` where status=0 ";
 		List<Map<String, Object>> rsm = template.queryForList(sql);
 		List<Msg> rsod = new ArrayList<Msg>();
 		for (@SuppressWarnings("rawtypes")
