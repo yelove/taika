@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -38,10 +39,11 @@ public class PageAction {
 	@Autowired
 	private MsgService msgService;
 
-	@RequestMapping(value = "mgorder", method = RequestMethod.GET)
+	@RequestMapping(value = "msg", method = RequestMethod.GET)
 	public String order(HttpServletRequest request) {
-		request.setAttribute("flag", true); 
-		request.setAttribute("list", msgService.getNewMsg()); 
+		String flag = request.getParameter("flag");
+		request.setAttribute("flag", StringUtils.isEmpty(flag)?"true":flag);
+		request.setAttribute("list", msgService.getNewMsg());
 		return "myorder";
 	}
 
@@ -52,29 +54,28 @@ public class PageAction {
 		rm.put(CommonStr.DESC, msgService.getNewMsg());
 		return rm;
 	}
+
 	@RequestMapping(value = "allcanseestr", method = RequestMethod.GET)
 	@ResponseBody
-	public String allcanseeStr(){
+	public String allcanseeStr() {
 		return msgService.getMsgStr();
 	}
-	
+
 	@RequestMapping(value = "addmsg", method = RequestMethod.POST, produces = "text/html;charset=UTF-8")
-	public String addMsg(HttpServletRequest request){
+	public String addMsg(HttpServletRequest request) {
 		String msg = request.getParameter("msg");
 		String msgdesc = request.getParameter("msgdesc");
 		Msg msgo = new Msg();
 		msgo.setMsg(msg);
 		msgo.setMsgDesc(msgdesc);
-		request.setAttribute("flag", msgService.saveMsg(msgo)); 
-		request.setAttribute("list", msgService.getNewMsg()); 
-		return "myorder";
+		boolean flag = msgService.saveMsg(msgo);
+		return "redirect:/msg?flag=" + flag;
 	}
-	
+
 	@RequestMapping(value = "update/{id}", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
-	public String updateMsg(HttpServletRequest request,@PathVariable("id") Long id){
-		request.setAttribute("flag", msgService.updateMsg(id)); 
-		request.setAttribute("list", msgService.getNewMsg()); 
-		return "myorder";
+	public String updateMsg(HttpServletRequest request, @PathVariable("id") Long id) {
+		boolean flag = msgService.updateMsg(id);
+		return "redirect:/msg?flag=" + flag;
 	}
 
 }

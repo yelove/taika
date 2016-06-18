@@ -56,7 +56,7 @@
 				success : function(rs) {
 					var data = $.parseJSON(rs);
 					if (data.status == 1000) {
-						location.href = 'mgorder';
+						location.href = 'msg';
 					} else if (data.status == 1009) {
 						alert("账号不存在");
 					} else if (data.status == 1004) {

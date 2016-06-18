@@ -9,7 +9,7 @@
 <link href="assets/css/basic.css" rel="stylesheet" />
 <link href="assets/css/custom.css" rel="stylesheet" />
 </head>
-<body style="background-color: #E2E2E2;">
+<body style="background-color: #E2E2E2;" onload="doRefrsh()">
 	<div id="page-wrapper"
 		style="margin: 0 0 0 20px; background-color: #E2E2E2;">
 		<div id="page-inner">
@@ -31,7 +31,7 @@
 					</div>
 					<div style="float: right;">
 						<p
-							style="margin-top: -6px; margin-bottom: -6px; margin-left: 40px;">支付宝二维码</p>
+							style="margin-top: -6px; margin-bottom: -6px; margin-left: 40px;">支付宝付款码</p>
 						<img style="width: 160px; height: 160px;"
 							src="assets/img/tk_zfb1.png">
 					</div>
@@ -50,12 +50,19 @@
 	</div>
 	<div id="dm-notif"></div>
 	<div id="footer-sec">Copyright &copy; 2016.台卡网络科技有限公司 All rights
-		reserved.</div>
+		reserved. 苏ICP备16025298号-1</div>
 </body>
 <script src="assets/js/jquery-1.10.2.js"></script>
 <script>
 	var clickTime;
-	$(document).ready( Refresh());
+	$(document).ready(Refresh());
+	var tt;
+	function doRefrsh() {
+		tt = setTimeout('Refresh()', 15000);
+	}
+	function stopRefrsh() {
+		clearTimeout(tt);
+	}
 	function Refresh() {
 		var nowTime = new Date().getTime();
 		if (clickTime != 'undefined' && (nowTime - clickTime < 3000)) {
@@ -64,7 +71,7 @@
 			clickTime = nowTime;
 			$
 					.ajax({
-						url : "allcansee",
+						url : "/bidding/allcansee",
 						type : "GET",
 						success : function(rs) {
 							var data = $.parseJSON(rs);

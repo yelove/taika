@@ -28,13 +28,13 @@
 					<div class="panel panel-info">
 						<div class="panel-heading">填写发布信息</div>
 						<div class="panel-body">
-							<form id="orderform" role="form" action="addmsg" method="post">
+							<form id="orderform" role="form" action="/bidding/addmsg" method="post">
 								<div class="form-group col-md-6">
 									<label>内容:</label> <input id="mgs" name="msg"
 										class="form-control" type="text">
 								</div>
 								<div class="form-group col-md-6">
-									<label>备 注:</label> <input id="msgDesc" name="msgDesc"
+									<label>备 注:</label> <input id="msgdesc" name="msgdesc"
 										class="form-control" type="text">
 								</div>
 								<input type="submit"
@@ -73,7 +73,7 @@
 													<td>${mglist.ctstr}</td>
 													<td>
 														<button class="btn btn-inverse"
-															onclick="location='update/${mglist.id}'">
+															onclick="location='/bidding/update/${mglist.id}'">
 															<i class="glyphicon glyphicon-plus"></i>下架
 														</button>
 													</td>
@@ -101,15 +101,15 @@
 <script type="text/javascript">
 	var showflag = false;
 	$(document).ready(function(){
-		<%-- if('false'==<%=request.getAttribute('flag')%>){
+		if('false'=='<%=request.getAttribute("flag")%>'){
 			dm_notification('系统异常,请联系管理员。', 'green', 2000)
-		} --%>
+		}
 	});
 	function showHideAddform() {
 		if (showflag) {
 			showflag = false;
 			$("#addorder").hide();
-			$("#addorderbtn").html('添加订单');
+			$("#addorderbtn").html('发布信息');
 		} else {
 			showflag = true;
 			$("#addorder").show();

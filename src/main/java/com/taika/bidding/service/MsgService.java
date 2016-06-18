@@ -11,6 +11,7 @@
 package com.taika.bidding.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -23,6 +24,7 @@ import com.taika.bidding.bean.Msg;
 import com.taika.bidding.bean.Pager;
 import com.taika.bidding.common.CommonStr;
 import com.taika.bidding.dao.MsgDao;
+import com.taika.bidding.util.TimeUtils;
 
 /**
  * @ClassName MsgService
@@ -37,21 +39,38 @@ public class MsgService {
 	private MsgDao msgDao;
 
 	private static List<Msg> msglist = new ArrayList<Msg>();
-	
+
 	private static String msgstr = "";
+
+	private static String today = "";
+
+	private long nextday = 0;
+
+	private int size = 0;
 
 	@PostConstruct
 	public void intiMsgList() {
 		List<Msg> lm = msgDao.getNewMsg();
 		msglist.addAll(lm);
 		createMsgStr();
+		nextday = getNextDay();
+		size = msgDao.countTodayMsg(TimeUtils.str2date(today, TimeUtils.yMd).getTime());
 	}
-	
-	private void createMsgStr(){
-		msgstr =JSON.toJSONString(msglist);
+
+	private long getNextDay() {
+		today = getTody();
+		return TimeUtils.str2date(today, TimeUtils.yMd).getTime() + 24 * 3600000;
 	}
-	
-	public String getMsgStr(){
+
+	private String getTody() {
+		return TimeUtils.date2str(new Date(), TimeUtils.yMd);
+	}
+
+	private void createMsgStr() {
+		msgstr = JSON.toJSONString(msglist);
+	}
+
+	public String getMsgStr() {
 		return msgstr;
 	}
 
@@ -60,6 +79,12 @@ public class MsgService {
 	}
 
 	public boolean saveMsg(Msg msg) {
+		if (nextday != 0 && System.currentTimeMillis() > nextday) {
+			nextday = getNextDay();
+			size = 0;
+		}
+		String no = today.substring(2, today.length()) + getNext();
+		msg.setNo(no);
 		Long id = msgDao.saveMsg(msg);
 		if (id > 0) {
 			msg.setId(id);
@@ -89,6 +114,41 @@ public class MsgService {
 		msgpager.setTotalSize(msgDao.count(qstr));
 		msgpager.setReList(msgDao.getOldMsg(currentPage, CommonStr.PAGESIZE, qstr));
 		return msgpager;
+	}
+
+	private String getNext() {
+		String rs = "";
+		if (size < 0) {
+			size = 0;
+		}
+		if (size < 10) {
+			rs = "0000" + size;
+			size = size + 1;
+			return rs;
+		}
+		if (size < 100) {
+			rs = "000" + size;
+			size = size + 1;
+			return rs;
+		}
+		if (size < 1000) {
+			rs = "00" + size;
+			size = size + 1;
+			return rs;
+		}
+		if (size < 10000) {
+			rs = "0" + size;
+			size = size + 1;
+			return rs;
+		}
+		if (size < 100000) {
+			rs = "" + size;
+			size = size + 1;
+			return rs;
+		}
+		rs = "A" + size;
+		size = size + 1;
+		return rs;
 	}
 
 }

@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +17,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Service;
 
+import com.mysql.jdbc.Statement;
 import com.taika.bidding.bean.Msg;
 
 @Service
@@ -35,7 +35,7 @@ public class MsgDao {
 			@Override
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 				PreparedStatement ps = con.prepareStatement(
-						"INSERT into `msg` (no,msg,msgDesc,status,createTime,updatetime) VALUES (?,?,?,?,?,?);");
+						"INSERT into `msg` (no,msg,msgDesc,status,createTime,updatetime) VALUES (?,?,?,?,?,?);",Statement.RETURN_GENERATED_KEYS);
 				ps.setString(1, msg.getNo());
 				ps.setString(2, msg.getMsg());
 				ps.setString(3, msg.getMsgDesc());
@@ -59,7 +59,7 @@ public class MsgDao {
 	}
 
 	public boolean updateUserForLastLog(Long id, Long updateTime) {
-		int i = template.update("UPDATE `msg` set updatetime=?,status=2 where id=?", updateTime, id);
+		int i = template.update("UPDATE `msg` set updateTime=?,status=2 where id=?", updateTime, id);
 		if (i > 0) {
 			return true;
 		}
@@ -67,7 +67,7 @@ public class MsgDao {
 	}
 
 	public boolean updateMsg(Long id) {
-		int i = template.update("UPDATE `msg` set updatetime=?,status=2 where id=?", new Date(), id);
+		int i = template.update("UPDATE `msg` set updateTime=?,status=2 where id=?", System.currentTimeMillis(), id);
 		if (i > 0) {
 			return true;
 		}
@@ -121,6 +121,12 @@ public class MsgDao {
 			rsod.add(od);
 		}
 		return rsod;
+	}
+	
+	@SuppressWarnings("deprecation")
+	public int countTodayMsg(Long time){
+		String sql = "select count(1) from `msg` where createTime > ?";
+		return template.queryForInt(sql, time);
 	}
 
 }
