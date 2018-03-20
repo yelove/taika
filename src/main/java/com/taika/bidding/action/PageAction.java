@@ -35,6 +35,7 @@ import com.taika.bidding.service.MsgService;
  */
 @Controller
 public class PageAction {
+	
 
 	@Autowired
 	private MsgService msgService;

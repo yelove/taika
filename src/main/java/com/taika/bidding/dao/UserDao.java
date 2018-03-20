@@ -49,7 +49,7 @@ public class UserDao {
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public User getUser(String name){
-		return template.queryForObject("select * from `user` where namemd5 = ?", new Object[]{MD5Tools.MD5(name)},new BeanPropertyRowMapper(User.class));
+		return (User) template.queryForObject("select * from `user` where namemd5 = ?", new Object[]{MD5Tools.MD5(name)},new BeanPropertyRowMapper(User.class));
 	}
 	
 	public boolean updateUserForLastLog(Long id,Long updateTime){

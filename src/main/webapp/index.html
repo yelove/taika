@@ -1,137 +1,78 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>TaiK-抢购</title>
-<link href="assets/css/bootstrap.css" rel="stylesheet" />
-<link href="assets/css/font-awesome.css" rel="stylesheet" />
-<link href="assets/css/basic.css" rel="stylesheet" />
-<link href="assets/css/custom.css" rel="stylesheet" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>PaysApi JAVA Demo Index</title>
 </head>
-<body style="background-color: #E2E2E2;" onload="doRefrsh()">
-	<div id="page-wrapper"
-		style="margin: 0 0 0 20px; background-color: #E2E2E2;">
-		<div id="page-inner">
-			<div class="row">
-				<div class="col-md-8">
-					<h1 class="page-head-line"
-						style="padding-bottom: 2px; border-bottom: 2px solid #ccc;">
-						<img style="width: 40px; height: 40px; margin-top: -20px;"
-							src="assets/img/tk_1.png"> TK<font
-							style="color: #ABA0FF; font-size: 70%;">闪惠</font>
-					</h1>
-				</div>
-				<div class="col-md-4">
-					<div style="width: 160px; float: right; margin-left: 4px;">
-						<p
-							style="margin-top: -6px; margin-bottom: -6px; margin-left: 40px;">微信二维码</p>
-						<img style="width: 160px; height: 160px;"
-							src="assets/img/tk_wx2.jpg">
-					</div>
-					<div style="float: right;">
-						<p
-							style="margin-top: -6px; margin-bottom: -6px; margin-left: 40px;">支付宝付款码</p>
-						<img style="width: 160px; height: 160px;"
-							src="assets/img/tk_zfb1.png">
-					</div>
-				</div>
-			</div>
-			<h5
-				style="margin-bottom: -8px; font-style: italic; margin-top: -12px;">
-				需要抢购的请添加微信号 <font style="color: red">yctk6666</font>，或扫右侧微信二维码与我们联系。
-				<button onclick="Refresh()" class="btn btn-success"
-					style="float: right;" id="submit" type="button">Refresh</button>
-			</h5>
-			<hr
-				style="height: 2px; border: none; border-top: 1px dashed #76E699;" />
-			<div id="rsmsg" class="row"></div>
-		</div>
-	</div>
-	<div id="dm-notif"></div>
-	<div id="footer-sec">Copyright &copy; 2016.台卡网络科技有限公司 All rights
-		reserved. 苏ICP备16025298号-1</div>
+<body>
+
+    <form>
+        <p><input id="inputprice" type="text" name="inputprice" class="form-control" placeholder="请输入金额" required></p>
+                
+        <div class="radio">
+            <label>            
+                <p><input type="radio" name="demo1" id="demo1-alipay" value="option1" checked="">
+                   	 支付宝支付</p>
+            </label>
+        </div>
+        <div class="radio">
+            <label>
+                <p><input type="radio" name="demo1" id="demo1-weixin" value="option2">
+               	 微信支付</p>
+            </label>
+        </div>
+        <button type="button" id="demoBtn1">确认购买</button>        
+    </form>
+
+    <form style='display:none;' id='formpay' name='formpay' method='post' action='https://pay.paysapi.com'>
+        <input name='goodsname' id='goodsname' type='text' value='' />
+        <input name='istype' id='istype' type='text' value='' />
+        <input name='key' id='key' type='text' value=''/>
+        <input name='notify_url' id='notify_url' type='text' value=''/>
+        <input name='orderid' id='orderid' type='text' value=''/>
+        <input name='orderuid' id='orderuid' type='text' value=''/>
+        <input name='price' id='price' type='text' value=''/>
+        <input name='return_url' id='return_url' type='text' value=''/>
+        <input name='uid' id='uid' type='text' value=''/>
+        <input type='submit' id='submitdemo1'>
+    </form>
+
+<!-- Jquery files -->
+<script type="text/javascript" src="https://cdn.staticfile.org/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript">
+$().ready(function(){
+    function getistype(){
+        return ($("#demo1-alipay").is(':checked') ? "1" : "2" ); 
+    }
+
+    $("#demoBtn1").click(function(){
+        $.post(
+            "/paysapi/pay",
+            {
+                price : $("#inputprice").val(), 
+                istype : getistype(),
+
+            },
+            function(data){ 
+                if (data.code > 0){
+                    $("#goodsname").val(data.data.goodsname);
+                    $("#istype").val(data.data.istype);
+                    $('#key').val(data.data.key);
+                    $('#notify_url').val(data.data.notify_url);
+                    $('#orderid').val(data.data.orderid);
+                    $('#orderuid').val(data.data.orderuid);
+                    $('#price').val(data.data.price);
+                    $('#return_url').val(data.data.return_url);
+                    $('#uid').val(data.data.uid);
+                    $('#submitdemo1').click();
+
+                } else {
+                    alert(data.msg);
+                }
+            }, "json"
+        );
+    });
+});
+</script>    
 </body>
-<script src="assets/js/jquery-1.10.2.js"></script>
-<script>
-	var clickTime;
-	$(document).ready(Refresh());
-	var tt;
-	function doRefrsh() {
-		tt = setTimeout('Refresh()', 15000);
-	}
-	function stopRefrsh() {
-		clearTimeout(tt);
-	}
-	function Refresh() {
-		var nowTime = new Date().getTime();
-		if (clickTime != 'undefined' && (nowTime - clickTime < 3000)) {
-			return false;
-		} else {
-			clickTime = nowTime;
-			$
-					.ajax({
-						url : "/bidding/allcansee",
-						type : "GET",
-						success : function(rs) {
-							var data = $.parseJSON(rs);
-							if (data.status == 1000) {
-								var rsod = data.desc;
-								if (rsod) {
-									var html = "";
-									for (var i = 0; i < rsod.length; i++) {
-										html += "<div class=\"col-md-6\"><div class=\"panel panel-back noti-box\"><div class=\"text-box\"><p>"
-												+ "编号:"
-												+ rsod[i].no
-												+ " "
-												+ rsod[i].msg
-												+ "</span></p><hr />"
-												+ rsod[i].msgDesc
-												+ "</div></div></div>";
-									}
-									$("#rsmsg").html(html);
-								}
-							} else {
-								dm_notification('系统异常,请联系管理员。', 'green', 2000)
-							}
-						},
-						error : function(error) {
-							dm_notification('系统异常,请联系管理员。', 'green', 2000)
-						}
-					});
-		}
-	}
-	function dm_notification(text, color, time, icon) {
-		var icon_span = "", html_element, time = time, $cont = $('#dm-notif');
-		if (time) {
-			time = time;
-		} else {
-			time = 2000;
-		}
-		if (icon) {
-			icon_span = "<span class='" + icon + "'></span> ";
-		}
-		html_element = $(
-				'<div class="dm-notification dm-notify-' + color + '">'
-						+ icon_span + text + '</div>').fadeIn('fast');
-		$cont.append(html_element);
-		html_element.on('click', function() {
-			dm_notification_close($(this));
-		});
-		setTimeout(function() {
-			dm_notification_close($cont.children('.dm-notification').first());
-		}, time);
-	}
-	function dm_notification_close(elem) {
-		if (typeof elem !== "undefined") {
-			elem.fadeOut('fast', function() {
-				$(this).remove();
-			});
-		} else {
-			$('.alert').fadeOut('fast', function() {
-				$(this).remove();
-			});
-		}
-	}
-</script>
 </html>

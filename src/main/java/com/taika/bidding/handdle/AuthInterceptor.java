@@ -19,8 +19,10 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) {
 		User user = (User) request.getSession(true).getAttribute(CommonStr.TKUSER);
-		if (null != user || request.getRequestURI().contains("user/login")
-				|| request.getRequestURI().contains("allcansee") || request.getRequestURI().contains("allcanseestr")) {
+		if (null != user || request.getRequestURI().contains("user/login") || 
+				request.getRequestURI().contains("allcansee") || 
+				request.getRequestURI().contains("allcanseestr") ||
+				request.getRequestURI().contains("paysapi")) {
 			return true;
 		}
 		else {

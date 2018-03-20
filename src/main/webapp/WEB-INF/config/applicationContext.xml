@@ -19,7 +19,7 @@
 	<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
 		<property name="poolName" value="springHikariCP" />
 		<property name="minimumIdle" value="5" />
-		<property name="maximumPoolSize" value="5" />
+		<property name="maximumPoolSize" value="50" />
 		<!-- <property name="validationTimeout" value="15000" /> -->
 		<property name="connectionTimeout" value="150000" />
 

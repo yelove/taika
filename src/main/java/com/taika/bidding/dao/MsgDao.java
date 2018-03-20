@@ -54,7 +54,7 @@ public class MsgDao {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Msg getMsg(String msg) {
-		return template.queryForObject("select * from `msg` where msg like ?", new Object[] { "%" + msg + "%" },
+		return (Msg) template.queryForObject("select * from `msg` where msg like ?", new Object[] { "%" + msg + "%" },
 				new BeanPropertyRowMapper(Msg.class));
 	}
 
